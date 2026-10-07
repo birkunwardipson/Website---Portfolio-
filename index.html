@@ -1,0 +1,593 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Dipson Portfolio</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&display=swap">
+<style>
+  :root{ color-scheme:dark; --bg:#000; --fg:#fff; --dim:rgba(255,255,255,.62); --line:rgba(255,255,255,.14); --accent:#ffd66b; }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--fg);font-family:'Inter Tight',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+  a{color:inherit;text-decoration:none}
+  button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+  ::selection{background:#fff;color:#000}
+  :focus-visible{outline:2px solid #fff;outline-offset:3px;border-radius:6px}
+
+  /* ---------- Scrubbed avatar background ---------- */
+  #bg{position:fixed;inset:0;z-index:0;width:100%;height:100%;object-fit:cover;object-position:72% center;pointer-events:none;background:#6b665f}
+  .shade{position:fixed;inset:0;z-index:0;pointer-events:none;background:linear-gradient(to top,rgba(0,0,0,.62),rgba(0,0,0,.18) 45%,rgba(0,0,0,.32))}
+
+  /* ---------- Header ---------- */
+  header{
+    position:fixed;inset:0 0 auto 0;z-index:10;
+    display:grid;grid-template-columns:1fr auto 1fr;align-items:center;
+    padding:calc(18px + env(safe-area-inset-top,0px)) 40px 18px;
+    transition:background .3s,backdrop-filter .3s;
+  }
+  header.solid{background:rgba(0,0,0,.6);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+
+  .logo{display:inline-flex;align-items:center;gap:8px;font-size:24px;font-weight:700;}
+  .custom-logo {
+    width: 22px;
+    height: 22px;
+    object-fit: contain;
+  }
+
+  nav.desk{
+    display:flex;gap:6px;padding:6px;
+    border:1px solid rgba(255,255,255,.14);border-radius:999px;
+    background:rgba(20,20,20,.55);
+    backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  }
+  nav.desk a{
+    font-size:16px;font-weight:500;padding:10px 22px;border-radius:999px;
+    color:rgba(255,255,255,.72);transition:color .2s,background .2s;
+  }
+  nav.desk a:hover{color:#fff;background:rgba(255,255,255,.08)}
+  nav.desk a.active{color:var(--accent);background:rgba(255,255,255,.08)}
+
+  .cta{
+    justify-self:end;font-size:16px;font-weight:500;text-decoration:none;
+    padding:11px 24px;border:1px solid rgba(255,255,255,.35);border-radius:999px;
+    transition:background .2s,color .2s;
+  }
+  .cta:hover{background:#fff;color:#000}
+
+  /* ---------- Hero ---------- */
+  .hero{
+    position:relative;z-index:1;min-height:100vh;min-height:100dvh;
+    display:flex;flex-direction:column;justify-content:center;
+    padding:140px 40px 80px;
+  }
+  .hero-inner{max-width:27rem}
+  .kicker{font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);margin-bottom:18px;line-height:1.6}
+  .type{font-size:clamp(20px,2.3vw,32px);line-height:1.25;font-weight:500;letter-spacing:-.01em;min-height:6.3em;margin-bottom:20px}
+  .caret{display:inline-block;width:2px;height:1.05em;background:#fff;vertical-align:middle;margin-left:3px;animation:blink 1s steps(2) infinite}
+  @keyframes blink{50%{opacity:0}}
+  .pills{display:flex;flex-wrap:wrap;gap:6px 0;opacity:0;transform:translateY(8px);transition:opacity .5s,transform .5s}
+  .pills.show{opacity:1;transform:none}
+  .pill{display:inline-flex;align-items:center;gap:10px;margin:0 .2em .4em;padding:.32em 1.25em;border-radius:999px;font-size:15px;white-space:nowrap;background:#fff;color:#000;border:1px solid rgba(0,0,0,.1);transition:background .2s,color .2s}
+  .pill:hover{background:#000;color:#fff}
+  .pill.ghost{background:transparent;color:#fff;border-color:#fff;position:relative}
+  .pill.ghost:hover{background:#fff;color:#000}
+  .pill u{text-underline-offset:2px}
+  .toast{position:absolute;top:-30px;left:50%;transform:translateX(-50%);background:#fff;color:#000;font-size:11px;font-weight:600;padding:2px 8px;border-radius:5px;pointer-events:none;opacity:0;transition:opacity .2s}
+  .toast.on{opacity:1}
+
+  .hint{position:absolute;left:50%;bottom:64px;transform:translateX(-50%);font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.75);transition:opacity .6s;white-space:nowrap}
+  .hint.gone{opacity:0}
+  .local{position:absolute;left:40px;bottom:64px;font-size:13px;letter-spacing:.06em;color:rgba(255,255,255,.75);font-variant-numeric:tabular-nums}
+
+  /* ---------- Content ---------- */
+  .page{position:relative;z-index:2;background:transparent;}
+  .dark { background: #000; border-top-left-radius: 36px; border-top-right-radius: 36px; }
+  section.block{padding:110px 40px;max-width:1280px;margin:0 auto}
+  .eyebrow{font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:var(--dim);margin-bottom:16px}
+  h2{font-size:clamp(38px,6vw,76px);line-height:1;font-weight:600;letter-spacing:-.035em;margin-bottom:34px}
+
+  .about{display:grid;grid-template-columns:1.35fr 1fr;gap:60px;align-items:start}
+  .about p{font-size:20px;line-height:1.6;color:rgba(255,255,255,.82);margin-bottom:18px;max-width:58ch}
+  #about h2, #about p { text-shadow: 0 2px 14px rgba(0,0,0,.8); }
+  #about .fact { background: rgba(0,0,0,.35); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+  .facts{display:grid;gap:12px}
+  .fact{border:1px solid var(--line);border-radius:18px;padding:18px 20px;background:rgba(255,255,255,.03)}
+  .fact b{display:block;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);font-weight:500;margin-bottom:6px}
+  .fact span{font-size:17px;line-height:1.4}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+  .tags span{border:1px solid var(--line);border-radius:999px;padding:7px 15px;font-size:14px}
+
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+  .card{display:flex;flex-direction:column;gap:14px;border:1px solid var(--line);border-radius:24px;padding:28px;background:rgba(255,255,255,.03);transition:transform .25s,background .25s,border-color .25s}
+  .card:hover{transform:translateY(-6px);background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.3)}
+  .card h3{font-size:27px;font-weight:600;letter-spacing:-.02em}
+  .card p{font-size:16px;line-height:1.55;color:rgba(255,255,255,.72);flex:1}
+  .status{align-self:flex-start;font-size:11.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:5px 12px;border-radius:999px;background:#fff;color:#000}
+  .status.wip{background:transparent;color:#fff;border:1px solid #fff}
+  .stack{display:flex;flex-wrap:wrap;gap:7px}
+  .stack span{font-size:12.5px;padding:4px 10px;border-radius:8px;background:rgba(255,255,255,.1)}
+  .links{display:flex;gap:18px;font-weight:500;font-size:15px}
+  .links a{text-decoration:underline;text-underline-offset:4px}
+  .links a:hover{opacity:.6}
+
+  /* ---------- Weather Widget ---------- */
+  .weather-widget {
+    max-width: 320px;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 18px;
+    padding: 14px 16px;
+    color: #fff;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    margin-top: 16px;
+  }
+  .wx-top {
+    display: flex;
+    align-items: center;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.6);
+    margin-bottom: 6px;
+  }
+  .wx-dot {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    background: #10b981;
+    border-radius: 50%;
+    margin: 0 6px;
+  }
+  .wx-body {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .wx-temp {
+    font-size: 38px;
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+  .wx-details h4 {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 2px;
+  }
+  .wx-details p {
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.5);
+  }
+  .wx-icon {
+    font-size: 26px;
+    line-height: 1;
+  }
+  .wx-divider {
+    height: 1px;
+    background: rgba(255, 255, 255, 0.08);
+    margin: 10px 0;
+  }
+  .wx-status {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(255, 255, 255, 0.04);
+    padding: 8px 12px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+  }
+  .wx-status-icon {
+    width: 28px;
+    height: 28px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+  .wx-status p {
+    font-size: 12px;
+    line-height: 1.35;
+    color: rgba(255, 255, 255, 0.85);
+  }
+
+  /* ---------- Testimonials ---------- */
+  .testimonials-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:28px;margin-top:40px}
+  .testimonial-card{position:relative;margin-top:40px;padding:56px 28px 28px;border:1px solid var(--line);border-radius:24px;background:rgba(255,255,255,.03);transition:transform .25s,background .25s,border-color .25s}
+  .testimonial-card:hover{transform:translateY(-6px);background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.3)}
+  .testimonial-avatar{position:absolute;top:-40px;left:24px;width:80px;height:80px;border-radius:22px;background:#222;border:1px solid var(--line);overflow:hidden;box-shadow:0 8px 20px rgba(0,0,0,.4)}
+  .testimonial-avatar img{width:100%;height:100%;object-fit:cover}
+  .testimonial-header{display:flex;align-items:center;min-height:36px;margin-bottom:14px;padding-left:72px}
+  .testimonial-header h3{font-size:22px;font-weight:600;letter-spacing:-.01em;line-height:1.2}
+  .testimonial-card p{font-size:16px;line-height:1.55;color:rgba(255,255,255,.72)}
+
+  .contact{text-align:center}
+  .contact h2{margin-inline:auto;max-width:12ch}
+  .big{display:inline-block;font-size:clamp(22px,3.4vw,40px);font-weight:500;text-decoration:underline;text-underline-offset:8px;margin:4px 0 30px}
+  .socials{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+  .socials a{border:1px solid rgba(255,255,255,.35);border-radius:999px;padding:11px 24px;transition:background .2s,color .2s}
+  .socials a:hover{background:#fff;color:#000}
+
+  /* ---------- Centered Footer ---------- */
+  .site-footer{padding:60px 40px 40px}
+  .foot-inner{
+    max-width:1280px;
+    margin:0 auto;
+    display:grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items:center;
+  }
+  .foot-left{
+    grid-column: 2;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:14px;
+    font-size:14px;
+    color:var(--dim);
+  }
+  .totop{display:grid;place-items:center;width:46px;height:46px;border:1px solid rgba(255,255,255,.3);border-radius:50%;transition:background .2s,color .2s}
+  .totop:hover{background:#fff;color:#000}
+  .legal-link{
+    grid-column: 3;
+    justify-self: end;
+    font-size:15px;
+    font-weight:500;
+    color:rgba(255,255,255,.8);
+    transition:color .2s;
+  }
+  .legal-link:hover{color:#fff;text-decoration:underline;text-underline-offset:4px}
+
+  .legal-panel{position:relative;max-width:560px;margin:0 auto 48px;padding:28px 32px;
+    border:1px solid var(--line);border-radius:24px;
+    background:rgba(0,0,0,.55);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+    animation:legalIn .25s ease}
+  .legal-panel[hidden]{display:none}
+  .legal-panel h3{font-size:22px;font-weight:600;margin-bottom:10px;padding-right:44px}
+  .legal-panel p{font-size:15px;line-height:1.6;color:rgba(255,255,255,.8)}
+  .legal-x{position:absolute;top:18px;right:18px;display:grid;place-items:center;width:36px;height:36px;border:1px solid rgba(255,255,255,.3);border-radius:50%;transition:background .2s,color .2s}
+  .legal-x:hover{background:#fff;color:#000}
+  @keyframes legalIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+  .reveal{transform:translateY(26px);transition:transform .7s}
+  .reveal.in{transform:none}
+
+  @media (max-width:900px){
+    .grid{grid-template-columns:1fr}
+    .testimonials-grid{grid-template-columns:1fr}
+    .about{grid-template-columns:1fr;gap:36px}
+  }
+  @media (max-width:767px){
+    header{padding:calc(16px + env(safe-area-inset-top,0px)) 20px 16px}
+    .logo{font-size:22px}
+    nav.desk,.cta{display:none}
+    .burger{display:flex}
+    #bg{height:68vh;height:68dvh;object-position:50% 25%}
+    .shade{background:linear-gradient(to bottom,rgba(0,0,0,.2),rgba(0,0,0,0) 28%,#000 68%)}
+    .hero{padding:120px 20px 116px; justify-content:flex-end;}
+    .local{display:none}
+    .type{min-height:4.4em}
+    .hint{bottom:70px;left:20px;transform:none}
+    .kicker{font-size:12px}
+    .pill{font-size:13px;padding:.3em 1em}
+    section.block{padding:84px 20px}
+    .site-footer{padding:48px 20px 36px}
+    .foot-inner{
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:20px;
+    }
+    .legal-link{
+      justify-self:center;
+    }
+  }
+  @media (prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto}
+    .reveal{opacity:1;transform:none;transition:none}
+    .caret{animation:none}
+    .card,.testimonial-card{transition:none}
+  }
+</style>
+
+<video id="bg" src="avatar.mp4" poster="poster.jpg" muted playsinline preload="auto" aria-hidden="true"></video>
+<div class="shade" aria-hidden="true"></div>
+
+<header>
+  <a class="logo" href="#top" aria-label="Dipson, home">Dipson<img src="logo.png" alt="Logo" class="custom-logo"></a>
+  <nav class="desk" aria-label="Main">
+    <a href="#about">About</a>
+    <a href="#projects">Projects</a>
+    <a href="#testimonials">Testimonials</a>
+    <a href="#contact">Contact</a>
+  </nav>
+  <a class="cta" href="#contact">Get in touch</a>
+  <button class="burger" id="burger" aria-label="Open menu" aria-expanded="false"><b></b><b></b><b></b></button>
+</header>
+
+<div class="menu" id="menu" aria-hidden="true">
+  <a href="#about">About</a>
+  <a href="#projects">Projects</a>
+  <a href="#testimonials">Testimonials</a>
+  <a href="#contact">Contact</a>
+</div>
+
+<main>
+  <section class="hero" id="top">
+    <div class="hero-inner">
+      <div class="kicker">CS · Data Science · Southeastern Louisiana University</div>
+      <p class="type" aria-live="polite"><span id="typed"></span><span class="caret" id="caret" aria-hidden="true"></span></p>
+      <div class="pills" id="pills">
+        <a class="pill" href="#projects">See my projects</a>
+        <a class="pill" href="#about">About me</a>
+        <a class="pill" href="#contact">Say hello</a>
+        <button class="pill ghost" id="copyBtn" type="button" title="Click to copy email address">
+          <span>Reach me: <u id="emailText">birkunwardipson@gmail.com</u></span>
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true"><rect x="3.5" y="1" width="7.5" height="7.5" rx="1" stroke="currentColor" stroke-width="1.1"/><rect x="1" y="3.5" width="7.5" height="7.5" rx="1" fill="currentColor" fill-opacity=".1" stroke="currentColor" stroke-width="1.1"/></svg>
+          <span class="toast" id="toast">Copied!</span>
+        </button>
+        <div class="weather-widget reveal">
+          <div class="wx-top">
+            <span>Hammond, LA</span>
+            <span class="wx-dot"></span>
+            <span id="wx-time">--:-- --</span>
+          </div>
+          <div class="wx-body">
+            <div style="display:flex; align-items:center; gap:16px;">
+              <div class="wx-temp" id="wx-temp">72°</div>
+              <div class="wx-details">
+                <h4 id="wx-desc">Clear</h4>
+                <p id="wx-hl">H:86° L:71°</p>
+              </div>
+            </div>
+            <div class="wx-icon" id="wx-icon">🌙</div>
+          </div>
+          <div class="wx-divider"></div>
+          <div class="wx-status">
+            <div class="wx-status-icon" id="wx-status-icon">💻</div>
+            <p id="wx-quote">The moon is up and so is Dipson.<br>planning on how to capture the World with his AI agent while the rest of the world is sound asleep..</p>
+          </div>
+        </div>
+        <div class="links" style="margin-top:20px">
+          <a href="Resume.pdf" target="_blank" rel="noopener">View Resume ↗</a>
+          <a href="Resume.pdf" download="Resume.pdf">Download PDF ⤓</a>
+        </div>
+      </div>
+    </div>
+    <div class="local" id="local" aria-label="Local time and weather"></div>
+  </section>
+
+  <div class="page">
+    <section class="block" id="about">
+      <div class="about">
+        <div class="reveal">
+          <div class="eyebrow">About</div>
+          <h2>Student, builder, desk assistant.</h2>
+          <p>I'm a Computer Science student with a Data Science concentration at Southeastern Louisiana University, and part of the SLU Honors Program. I'm originally from Pokhara, Nepal, and I speak English, Nepali and Hindi.</p>
+          <p>As First Desk Assistant at the SLU Innovation Lab, I help 100+ daily visitors with 3D printers, drones, flight simulators and podcasting gear. I'm interested in data analytics, machine learning and cybersecurity, and I build side projects alongside classes.</p>
+          <div class="tags">
+            <span>Python</span><span>Stable Diffusion / LoRA</span><span>Gradio</span><span>Next.js</span><span>JavaFX</span><span>Linux</span><span>LaTeX</span>
+          </div>
+        </div>
+        <div class="facts reveal">
+          <div class="fact"><b>Studying</b><span>B.S. Computer Science, Data Science concentration, SLU Honors Program</span></div>
+          <div class="fact"><b>Working</b><span>First Desk Assistant, SLU Innovation Lab</span></div>
+          <div class="fact"><b>Communities</b><span>ACM, Google Developer Group, Cybersecurity Club (CTFs and pen testing)</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" id="projects" style="padding-top:20px">
+      <div class="eyebrow reveal">Projects</div>
+      <h2 class="reveal">Things I've built.</h2>
+      <div class="grid">
+        <article class="card reveal">
+          <span class="status wip">In progress</span>
+          <h3>Dual-Style Image Generator</h3>
+          <p>Stable Diffusion 1.5 with two DreamBooth LoRA adapters (anime and photorealistic) trained in Colab, switchable from a Gradio UI with strength, steps and guidance controls. Known limits are documented: background faces and hand anatomy.</p>
+          <div class="stack"><span>Stable Diffusion 1.5</span><span>LoRA</span><span>Gradio</span><span>Hugging Face</span></div>
+          <div class="links"><a href="https://huggingface.co/dipson-bir/my-lora-models" target="_blank" rel="noopener">Models ↗</a><a href="#">Demo ↗</a></div>
+        </article>
+        <article class="card reveal">
+          <span class="status">Built</span>
+          <h3>SolPOS</h3>
+          <p>A point-of-sale system on the Solana blockchain that lets merchants accept payments with much lower transaction fees than card processors.</p>
+          <div class="stack"><span>Next.js</span><span>Solana</span></div>
+          <div class="links"><a href="#">Code ↗</a><a href="#">Live ↗</a></div>
+        </article>
+        <article class="card reveal">
+          <span class="status">Built</span>
+          <h3>Fortune 500 Nonprofit Partnership Platform</h3>
+          <p>Engineered backend infrastructure matching nonprofits with Fortune 500 partners written in JavaScript, Node.js, Express, PostgreSQL, Supabase, which Resolved database connectivity failures and remediated a SQL injection vulnerability found during a security-focused code review.</p>
+          <div class="stack"><span>JavaScript</span><span>Node.js</span><span>Express</span><span>PostgreSQL</span><span>Supabase</span></div>
+          <div class="links"><a href="#">Code ↗</a></div>
+        </article>
+      </div>
+    </section>
+
+    <!-- ---------- Testimonials Section ---------- -->
+    <section class="block" id="testimonials" style="padding-top:20px">
+      <div class="eyebrow reveal">Testimonials</div>
+      <h2 class="reveal">What leaders say.</h2>
+      <div class="testimonials-grid">
+        <article class="testimonial-card reveal">
+          <div class="testimonial-avatar">
+            <img src="Dankost.png.jpg" alt="Dankost.png avatar" loading="lazy">
+          </div>
+          <div class="testimonial-header">
+            <div>
+              <h3>Dan kost</h3>
+              <p style="font-size:13px; color:var(--dim); font-weight:500;">CEO at Sports Media Inc.</p>
+            </div>
+          </div>
+          <p>"Dipson contributed meaningfully to both full-stack engineering and applied machine learning. His performance ratings across all competencies were outstanding, and he was highly recommended for future engagement. Dipson would be an asset to any organization seeking a thoughtful, disciplined, and technically capable contributor."</p>
+          <div class="links" style="margin-top:20px">
+            <a href="Dipson Kunwar LOR.pdf" target="_blank" rel="noopener">View LOR ↗</a>
+            <a href="Dipson Kunwar LOR.pdf" download="Dipson_Kunwar_LOR.pdf">Download PDF ⤓</a>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="block contact" id="contact">
+      <div class="eyebrow reveal">Contact</div>
+      <h2 class="reveal">Let's build something.</h2>
+      <a class="big reveal" id="mailLink" href="mailto:birkunwardipson@gmail.com">birkunwardipson@gmail.com</a>
+      <div class="socials reveal">
+        <a href="https://github.com/birkunwardipson" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://www.linkedin.com/in/dipsonbirkunwar" target="_blank" rel="noopener">LinkedIn</a>
+        <a href="https://huggingface.co/dipson-bir" target="_blank" rel="noopener">Hugging Face</a>
+      </div>
+    </section>
+
+    <footer class="site-footer">
+      <div class="legal-panel" id="legal" hidden>
+        <button class="legal-x" id="legalClose" type="button" aria-label="Close legal notice">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+        </button>
+        <h3>Legal Notice</h3>
+        <p>This site is operated by Dipson Kunwar. All content, design and code on this site were created by the site owner unless otherwise noted. Logos,trademarks and code strictly belong to the site owners.</p>
+      </div>
+
+      <div class="foot-inner">
+        <div class="foot-left">
+          <a class="totop" href="#top" aria-label="Back to top">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+          </a>
+          <span>© <span id="yr"></span> Dipson Kunwar</span>
+        </div>
+        <button class="legal-link" id="legalBtn" type="button">Legal Notice</button>
+      </div>
+    </footer>
+  </div>
+</main>
+
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const touch = matchMedia('(hover: none)').matches;
+  $('yr').textContent = new Date().getFullYear();
+
+  /* ---- Header backdrop after the hero ---- */
+  const hdr = document.querySelector('header');
+  const onScroll = () => hdr.classList.toggle('solid', scrollY > innerHeight * 0.6);
+  addEventListener('scroll', onScroll, { passive: true }); onScroll();
+
+  /* ---- Mobile menu ---- */
+  const burger = $('burger'), menu =$('menu');
+  const setMenu = open => { burger.classList.toggle('open', open); menu.classList.toggle('open', open);
+    burger.setAttribute('aria-expanded', open); menu.setAttribute('aria-hidden', !open); burger.setAttribute('aria-label', open ? 'Close menu' : 'Open menu'); };
+  burger.addEventListener('click', () => setMenu(!menu.classList.contains('open')));
+  menu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => setMenu(false)));
+  addEventListener('keydown', e => { if (e.key === 'Escape') setMenu(false); });
+
+  /* ---- Typewriter ---- */
+  const text = touch ? "Hi, I'm Dipson. CS student building AI and web projects. Swipe the world of code need us."
+                     : "Hi, I'm Dipson. CS student building AI and web projects. Scroll the world of code need us.";
+  const typed = $('typed'), caret = $('caret'), pills =$('pills');
+  if (reduce) { typed.textContent = text; caret.remove(); pills.classList.add('show'); }
+  else {
+    let i = 0;
+    setTimeout(function step() {
+      typed.textContent = text.slice(0, ++i);
+      if (i < text.length) setTimeout(step, 34); else { caret.remove(); }
+    }, 600);
+    setTimeout(() => pills.classList.add('show'), 400);
+  }
+
+  /* ---- Copy email ---- */
+  const toast = $('toast');$('copyBtn').addEventListener('click', async () => {
+    const mail = $('emailText').textContent;
+    try { await navigator.clipboard.writeText(mail); }
+    catch { const t = document.createElement('textarea'); t.value = mail; document.body.appendChild(t); t.select(); document.execCommand('copy'); t.remove(); }
+    toast.classList.add('on'); setTimeout(() => toast.classList.remove('on'), 1800);
+  });
+
+  /* ---- Scroll reveal ---- */
+  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { threshold: .15 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  /* ---- Live Weather & Status Widget ---- */
+  const WX_CITY = { name: 'HAMMOND, LA', lat: 30.5044, lon: -90.4612, tz: 'America/Chicago' };
+
+  function updateWidget() {
+    const now = new Date();
+    const timeStr = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', timeZone: WX_CITY.tz });
+    const hour = parseInt(now.toLocaleTimeString('en-US', { hour: 'numeric', hour12: false, timeZone: WX_CITY.tz }));
+   
+    const isNight = hour < 6 || hour >= 19;
+   
+    document.getElementById('wx-time').textContent = timeStr;
+    document.getElementById('wx-icon').textContent = isNight ? '🌙' : '☀️';
+   
+    if (isNight) {
+      document.getElementById('wx-status-icon').textContent = '💻';
+      document.getElementById('wx-quote').innerHTML = 'The moon is up and so is Dipson.<br>researching withhis AI agent while rest of the world is sound asleep.';
+    } else {
+      document.getElementById('wx-status-icon').textContent = '☕';
+      document.getElementById('wx-quote').innerHTML = 'The sun is up and so is Dipson.<br>coding and building the next big thing.';
+    }
+  }
+
+  updateWidget();
+  setInterval(updateWidget, 10000);
+
+  // Fetch real-time weather data
+  fetch(`https://api.open-meteo.com/v1/forecast?latitude=${WX_CITY.lat}&longitude=${WX_CITY.lon}&current=temperature_2m,weather_code&daily=temperature_2m_max,temperature_2m_min&temperature_unit=fahrenheit&timezone=${encodeURIComponent(WX_CITY.tz)}`)
+    .then(r => r.json())
+    .then(d => {
+      const temp = Math.round(d.current.temperature_2m);
+      const max = Math.round(d.daily.temperature_2m_max[0]);
+      const min = Math.round(d.daily.temperature_2m_min[0]);
+      const code = d.current.weather_code;
+     
+      const weatherNames = { 0: 'Clear', 1: 'Mostly Clear', 2: 'Partly Cloudy', 3: 'Overcast', 45: 'Foggy', 61: 'Rain', 80: 'Showers', 95: 'Thunderstorm' };
+     
+      document.getElementById('wx-temp').textContent = `${temp}°`;
+      document.getElementById('wx-desc').textContent = weatherNames[code] || 'Clear';
+      document.getElementById('wx-hl').textContent = `H:${max}° L:${min}°`;
+    })
+    .catch(() => {});
+
+  /* ---- Scrubbed avatar ---- */
+  const v = $('bg');
+  let dur = 0, target = 0, cur = 0, seeking = false, seekAt = 0, lastInput = -1e9;
+  const LO = 0.03, HI = 0.97;
+  const onMeta = () => { if (!v.duration) return; dur = v.duration; target = cur = dur * 0.5; v.currentTime = cur; };
+  v.readyState >= 1 ? onMeta() : v.addEventListener('loadedmetadata', onMeta);
+  v.addEventListener('seeked', () => seeking = false);
+  v.addEventListener('error', () => { v.style.display = 'none'; });
+
+  const input = x => {
+    if (!dur) return;
+    target = (LO + Math.min(1, Math.max(0, x / innerWidth)) * (HI - LO)) * dur;
+    lastInput = performance.now();
+  };
+  addEventListener('pointermove', e => input(e.clientX), { passive: true });
+
+  (function loop(now) {
+    if (dur) {
+      if (!reduce && now - lastInput > 3500) target = dur * (0.5 + 0.2 * Math.sin(now / 2300));
+      cur += (target - cur) * 0.14;
+      if (seeking && now - seekAt > 300) seeking = false;
+      if (!seeking && Math.abs(v.currentTime - cur) > 0.012) { seeking = true; seekAt = now; v.currentTime = cur; }
+    }
+    requestAnimationFrame(loop);
+  })(performance.now());
+
+  /* ---- Legal notice panel ---- */
+  const legal = $('legal'), legalBtn =$('legalBtn');
+  const setLegal = open => {
+    legal.hidden = !open;
+    legalBtn.setAttribute('aria-expanded', open);
+    if (open) legal.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  };
+  legalBtn.addEventListener('click', () => setLegal(legal.hidden));
+  $('legalClose').addEventListener('click', () => setLegal(false));
+  addEventListener('keydown', e => { if (e.key === 'Escape') setLegal(false); });
+})();
+</script>
+</body></html>
